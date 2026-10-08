@@ -1,0 +1,143 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Cognito authentication for Spry
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: spry
+
+  FrontendUrl:
+    Type: String
+    Default: https://d3b5dueyhkda58.cloudfront.net
+
+  CognitoDomainPrefix:
+    Type: String
+    Default: spry-auth-lab3-2026
+
+  GoogleClientId:
+    Type: String
+
+  GoogleClientSecret:
+    Type: String
+    NoEcho: true
+
+Resources:
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "${ProjectName}-users"
+
+      UsernameAttributes:
+        - email
+
+      AutoVerifiedAttributes:
+        - email
+
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+
+      UserPoolTier: ESSENTIALS
+
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+
+      UserPoolTags:
+        PROJECT_NAME: !Ref ProjectName
+
+
+  GoogleIdentityProvider:
+    Type: AWS::Cognito::UserPoolIdentityProvider
+    Properties:
+      UserPoolId: !Ref UserPool
+
+      ProviderName: Google
+      ProviderType: Google
+
+      ProviderDetails:
+        client_id: !Ref GoogleClientId
+        client_secret: !Ref GoogleClientSecret
+        authorize_scopes: "openid email profile"
+
+      AttributeMapping:
+        email: email
+        email_verified: email_verified
+
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    DependsOn:
+      - GoogleIdentityProvider
+
+    Properties:
+      UserPoolId: !Ref UserPool
+
+      ClientName: !Sub "${ProjectName}-frontend"
+
+      GenerateSecret: false
+
+      AllowedOAuthFlowsUserPoolClient: true
+
+      AllowedOAuthFlows:
+        - code
+
+      AllowedOAuthScopes:
+        - openid
+        - email
+        - profile
+
+      SupportedIdentityProviders:
+        - COGNITO
+        - Google
+
+      CallbackURLs:
+        - !Sub "${FrontendUrl}/auth/callback/"
+        - "http://localhost:5173/auth/callback/"
+
+      LogoutURLs:
+        - !Sub "${FrontendUrl}/"
+        - "http://localhost:5173/"
+
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: !Ref CognitoDomainPrefix
+      UserPoolId: !Ref UserPool
+      ManagedLoginVersion: 2
+
+
+  ManagedLoginBranding:
+    Type: AWS::Cognito::ManagedLoginBranding
+    DependsOn:
+      - UserPoolDomain
+      - UserPoolClient
+
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientId: !Ref UserPoolClient
+      UseCognitoProvidedValues: true
+
+
+Outputs:
+
+  UserPoolId:
+    Value: !Ref UserPool
+
+  UserPoolClientId:
+    Value: !Ref UserPoolClient
+
+  CognitoDomain:
+    Value: !Sub "https://${CognitoDomainPrefix}.auth.${AWS::Region}.amazoncognito.com"
+
+  Authority:
+    Value: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}"
