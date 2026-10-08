@@ -42,8 +42,23 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Copy privacy page
-        run: cp frontend/public/privacy.html frontend/dist/privacy.html
+      - name: Create privacy page
+        run: |
+          cat > frontend/dist/privacy.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="uk">
+          <head>
+            <meta charset="UTF-8">
+            <title>Privacy Policy - Spry</title>
+          </head>
+          <body>
+            <h1>Політика конфіденційності Spry</h1>
+            <p>Spry - навчальний проєкт. Для входу через Google ми отримуємо лише вашу електронну адресу та базові дані профілю (ім'я).</p>
+            <p>Ці дані використовуються виключно для автентифікації та не передаються третім особам.</p>
+            <p>Щоб видалити свої дані, напишіть на shlapak.olesia@gmail.com.</p>
+          </body>
+          </html>
+          EOF
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
