@@ -8,6 +8,10 @@ Parameters:
   ReportEmail:
     Type: String
     Description: Verified SES email used as sender and recipient
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: PostgreSQL connection URL for report builder
   VpcId:
     Type: AWS::EC2::VPC::Id
     Default: vpc-01da44e0522af7fb3
@@ -165,7 +169,7 @@ Resources:
 
       Environment:
         Variables:
-          DATABASE_URL: "{{resolve:ssm-secure:/spry/backend/DATABASE_URL}}"
+          DATABASE_URL: !Ref DatabaseUrl
           REPORTS_BUCKET: !Ref ReportsBucket
 
       Tags:
