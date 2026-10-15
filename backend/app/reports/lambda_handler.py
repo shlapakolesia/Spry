@@ -7,7 +7,6 @@ import boto3
 
 from app.reports.weekly import build_weekly_report
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 

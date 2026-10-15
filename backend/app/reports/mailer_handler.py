@@ -5,7 +5,6 @@ from urllib.parse import unquote_plus
 
 import boto3
 
-
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 

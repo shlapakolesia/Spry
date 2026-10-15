@@ -1,6 +1,6 @@
 import csv
 import io
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select
 
@@ -20,7 +20,7 @@ def _week_start(week: str) -> datetime:
             "Week must use ISO format YYYY-Www, for example 2026-W40"
         ) from exc
 
-    return date.replace(tzinfo=timezone.utc)
+    return date.replace(tzinfo=UTC)
 
 
 def _meeting_duration_hours(meeting: Meeting) -> float:
