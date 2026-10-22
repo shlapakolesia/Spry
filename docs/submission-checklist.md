@@ -2,7 +2,7 @@
 
 | Submission item | Status | Evidence |
 |---|---|---|
-| Git commit containing parser, `infra/ai.yml`, Paste an agenda UI, and ADR | BLOCKED — local commit can be made; push is withheld | A push to `main` runs the frontend deploy workflow. The parser stack has no verified Function URL because it has not been created; publishing without that endpoint could leave Parse unusable. |
+| Git commit containing parser, `infra/ai.yml`, Paste an agenda UI, and ADR | DONE LOCALLY — `1edd44b`; push withheld | A push to `main` runs the frontend deploy workflow. The parser stack has no verified Function URL because it has not been created; publishing without that endpoint could leave Parse unusable. |
 | Screen recording, GIF or MP4, at most 45 seconds | HUMAN ACTION NEEDED | [Video recording checklist](video-recording-checklist.md); live parser is currently blocked |
 | Five-input Step 5 evaluation table | BLOCKED — AWS model access | [Agenda evaluation](agenda-evaluation.md); no model results fabricated |
 | CloudWatch parse log with tokens, latency, and cost | BLOCKED — no successful parse | [CloudWatch evidence](cloudwatch-evidence.md) |
