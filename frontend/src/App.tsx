@@ -8,8 +8,7 @@ import { NewMeetingDialog } from "@/components/NewMeetingDialog";
 import { Button } from "@/components/ui/button";
 import type { Meeting } from "@/types/meeting";
 
-const COGNITO_DOMAIN =
-  "https://spry-auth-lab3-2026.auth.eu-north-1.amazoncognito.com";
+const COGNITO_DOMAIN = "https://spry-auth-lab3-2026.auth.eu-north-1.amazoncognito.com";
 
 const CLIENT_ID = "1uucla7u51q5an1th1j48hjtbi";
 
@@ -33,25 +32,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    // Loading the initial list synchronizes this page with the API.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void load();
   }, [load]);
 
   // The submission URL /login/ automatically redirects to Cognito.
   useEffect(() => {
-    if (
-      window.location.pathname === "/login/" &&
-      !auth.isLoading &&
-      !auth.isAuthenticated &&
-      !auth.activeNavigator
-    ) {
+    if (window.location.pathname === "/login/" && !auth.isLoading && !auth.isAuthenticated && !auth.activeNavigator) {
       void auth.signinRedirect();
     }
-  }, [
-    auth.isLoading,
-    auth.isAuthenticated,
-    auth.activeNavigator,
-    auth.signinRedirect,
-  ]);
+  }, [auth.isLoading, auth.isAuthenticated, auth.activeNavigator, auth]);
 
   const handleSignOut = async () => {
     await auth.removeUser();
@@ -59,9 +50,7 @@ export default function App() {
     const logoutUri = `${window.location.origin}/`;
 
     window.location.href =
-      `${COGNITO_DOMAIN}/logout` +
-      `?client_id=${CLIENT_ID}` +
-      `&logout_uri=${encodeURIComponent(logoutUri)}`;
+      `${COGNITO_DOMAIN}/logout` + `?client_id=${CLIENT_ID}` + `&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
 
   if (auth.isLoading) {
@@ -80,10 +69,7 @@ export default function App() {
     );
   }
 
-  if (
-    window.location.pathname === "/login/" &&
-    !auth.isAuthenticated
-  ) {
+  if (window.location.pathname === "/login/" && !auth.isAuthenticated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50">
         <p>Redirecting to sign in...</p>
@@ -100,16 +86,12 @@ export default function App() {
 
             {!loading && !error && (
               <p className="mt-1 text-sm text-muted-foreground">
-                {meetings.length === 1
-                  ? "1 meeting"
-                  : `${meetings.length} meetings`}
+                {meetings.length === 1 ? "1 meeting" : `${meetings.length} meetings`}
               </p>
             )}
 
             {auth.isAuthenticated && (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Signed in as {auth.user?.profile.email}
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">Signed in as {auth.user?.profile.email}</p>
             )}
           </div>
 
@@ -138,19 +120,10 @@ export default function App() {
           </div>
         </header>
 
-        <MeetingList
-          meetings={meetings}
-          loading={loading}
-          error={error}
-          onNew={() => setDialogOpen(true)}
-        />
+        <MeetingList meetings={meetings} loading={loading} error={error} onNew={() => setDialogOpen(true)} />
       </main>
 
-      <NewMeetingDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onCreated={load}
-      />
+      <NewMeetingDialog open={dialogOpen} onOpenChange={setDialogOpen} onCreated={load} />
     </div>
   );
 }

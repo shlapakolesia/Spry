@@ -1,9 +1,10 @@
 AWS_REGION ?= eu-central-1
+export TEXT
 ECR_REGISTRY ?= your-aws-account-id.dkr.ecr.$(AWS_REGION).amazonaws.com
 S3_BUCKET ?= spry-frontend-bucket
 CLOUDFRONT_DIST_ID ?= YOUR_DISTRIBUTION_ID
 
-.PHONY: build-local up-local deploy-frontend deploy-backend report-now
+.PHONY: build-local up-local deploy-frontend deploy-backend report-now llm-hello parse
 
 # Local Development
 up-local:
@@ -32,3 +33,11 @@ report-now:
 		--region eu-north-1 \
 		--queue-url "$$QUEUE_URL" \
 		--message-body '{"week":"$(WEEK)","source":"sqs"}'
+
+# Local Bedrock calls use the caller's AWS credential chain and us-east-1 by default.
+llm-hello:
+	cd backend && uv run python -c 'from app.ai.agenda import hello; hello()'
+
+parse:
+	@test -n "$$TEXT" || (echo "Usage: make parse TEXT='paste agenda text here'" && exit 1)
+	cd backend && uv run python -c 'import json, os; from datetime import date; from app.ai.agenda import parse_agenda; agenda, usage = parse_agenda(os.environ["TEXT"], date.today(), "Europe/Kyiv"); print(json.dumps({"agenda": agenda.model_dump(mode="json"), "usage": usage}, ensure_ascii=False, indent=2))'

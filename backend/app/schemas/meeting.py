@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
+from app.ai.agenda import ParsedAgenda
+
 
 class MeetingCreate(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
@@ -26,3 +28,12 @@ class MeetingRead(BaseModel):
     starts_at: datetime
     ends_at: datetime
     attendee_count: int
+    agenda: dict | None = None
+    ai_suggestion: dict | None = None
+
+
+class AgendaSave(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    agenda: ParsedAgenda
+    ai_suggestion: dict | None = None

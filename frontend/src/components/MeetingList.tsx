@@ -2,6 +2,7 @@ import { Plus } from "lucide-react";
 
 import { MeetingCard } from "@/components/MeetingCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "react-oidc-context";
 import type { Meeting } from "@/types/meeting";
 
 interface MeetingListProps {
@@ -12,6 +13,7 @@ interface MeetingListProps {
 }
 
 export function MeetingList({ meetings, loading, error, onNew }: MeetingListProps) {
+  const auth = useAuth();
   if (error) return <p className="text-sm text-destructive">{error}</p>;
   if (loading) return <p className="text-sm text-muted-foreground">Loading…</p>;
 
@@ -31,7 +33,7 @@ export function MeetingList({ meetings, loading, error, onNew }: MeetingListProp
     <ul className="grid gap-3">
       {meetings.map((meeting) => (
         <li key={meeting.id}>
-          <MeetingCard meeting={meeting} />
+          <MeetingCard meeting={meeting} token={auth.user?.id_token} />
         </li>
       ))}
     </ul>

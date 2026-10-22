@@ -2,6 +2,7 @@ import { Clock, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Meeting } from "@/types/meeting";
+import { AgendaEditor } from "@/components/AgendaEditor";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
   weekday: "short",
@@ -20,7 +21,7 @@ function formatRange(start: Date, end: Date): string {
   return `${dateFormat.format(start)}, ${timeFormat.format(start)} – ${dateFormat.format(end)}, ${timeFormat.format(end)}`;
 }
 
-export function MeetingCard({ meeting }: { meeting: Meeting }) {
+export function MeetingCard({ meeting, token }: { meeting: Meeting; token?: string }) {
   const start = new Date(meeting.starts_at);
   const end = new Date(meeting.ends_at);
   const attendees = meeting.attendee_count === 1 ? "1 attendee" : `${meeting.attendee_count} attendees`;
@@ -39,6 +40,9 @@ export function MeetingCard({ meeting }: { meeting: Meeting }) {
           <Users className="size-4 shrink-0" />
           {attendees}
         </span>
+      </CardContent>
+      <CardContent className="border-t pt-4">
+        <AgendaEditor meeting={meeting} token={token} />
       </CardContent>
     </Card>
   );
