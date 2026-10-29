@@ -38,10 +38,13 @@ export function AgendaEditor({ meeting, token }: { meeting: Meeting; token?: str
     }
     return value !== null && value !== undefined;
   };
-  const badge = (key: string, value: unknown) =>
-    suggested && hasSuggestedValue(value) && !touched.has(key) ? (
+  const badge = (key: keyof ParsedAgenda, value: unknown) => {
+    const originalValue = suggestion?.agenda[key];
+    const unchanged = JSON.stringify(value) === JSON.stringify(originalValue);
+    return suggested && hasSuggestedValue(originalValue) && unchanged && !touched.has(key) ? (
       <span className="ml-2 rounded bg-secondary px-2 py-0.5 text-xs text-muted-foreground">Suggested</span>
     ) : null;
+  };
 
   async function parse() {
     if (!token) {
