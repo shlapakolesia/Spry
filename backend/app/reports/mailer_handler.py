@@ -49,9 +49,7 @@ def handler(event, context):
         message["From"] = report_email
         message["To"] = report_email
 
-        message.set_content(
-            "Your Spry weekly meetings report is attached."
-        )
+        message.set_content("Your Spry weekly meetings report is attached.")
 
         message.add_attachment(
             report_bytes,

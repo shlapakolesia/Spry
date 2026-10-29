@@ -6,7 +6,7 @@ flowchart LR
 
   subgraph outside[Outside VPC]
     parser[Agenda parser Lambda · eu-north-1\nNo database access]
-    bedrock[Amazon Bedrock · us-east-1\nClaude Opus 5.5]
+    bedrock[Amazon Bedrock Mantle · us-west-2\nMistral Large 3 · Chat Completions]
   end
 
   subgraph vpc[Application VPC · eu-north-1]

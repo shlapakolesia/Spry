@@ -3,8 +3,10 @@ import os
 DATABASE_URL: str = os.environ.get(
     "DATABASE_URL", "postgresql+psycopg://spry:spry@localhost:5432/spry"
 )
-PARSER_MODEL: str = os.environ.get("PARSER_MODEL", "anthropic.claude-opus-5-5")
-BEDROCK_REGION: str = os.environ.get("BEDROCK_REGION", "us-east-1")
+PARSER_MODEL: str = os.environ.get(
+    "PARSER_MODEL", "mistral.mistral-large-3-675b-instruct"
+)
+BEDROCK_REGION: str = os.environ.get("BEDROCK_REGION", "us-west-2")
 COGNITO_REGION: str = os.environ.get("COGNITO_REGION", "eu-north-1")
 COGNITO_USER_POOL_ID: str = os.environ.get(
     "COGNITO_USER_POOL_ID", "eu-north-1_m4dJRmho3"

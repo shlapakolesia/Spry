@@ -31,10 +31,7 @@ def _meeting_duration_hours(meeting: Meeting) -> float:
 def _statistics(meetings: list[Meeting]) -> tuple[int, float]:
     meeting_count = len(meetings)
 
-    total_duration_hours = sum(
-        _meeting_duration_hours(meeting)
-        for meeting in meetings
-    )
+    total_duration_hours = sum(_meeting_duration_hours(meeting) for meeting in meetings)
 
     return meeting_count, total_duration_hours
 

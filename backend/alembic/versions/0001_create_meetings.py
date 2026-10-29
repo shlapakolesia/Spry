@@ -4,6 +4,7 @@ Revision ID: 0001
 Revises:
 Create Date: 2026-09-29
 """
+
 import sqlalchemy as sa
 
 from alembic import op
@@ -23,7 +24,9 @@ def upgrade() -> None:
         sa.Column("ends_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("attendee_count", sa.Integer(), nullable=False),
         sa.CheckConstraint("ends_at > starts_at", name="ck_meetings_ends_after_starts"),
-        sa.CheckConstraint("attendee_count >= 0", name="ck_meetings_attendee_count_nonneg"),
+        sa.CheckConstraint(
+            "attendee_count >= 0", name="ck_meetings_attendee_count_nonneg"
+        ),
     )
 
 

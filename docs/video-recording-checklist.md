@@ -16,6 +16,5 @@ Recommended text:
 
 > Tuesday at 14:00, launch planning, 30 minutes. 1) Check page readiness — Olena, 15 minutes. 2) Agree on the client email — Taras, 10 minutes. Olena sends the final text by Friday.
 
-The required Bedrock model access and deployed parser must work before this
-recording can show a successful Parse step. Current status: blocked by the
-account's unavailable Claude Opus 5.5 agreement.
+The model, parser Lambda, Function URL, and frontend bundle are deployed. First
+sign in to Spry and verify Parse → edit → Save; then record the sequence above.

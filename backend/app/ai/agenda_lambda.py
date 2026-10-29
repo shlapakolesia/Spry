@@ -5,11 +5,16 @@ from datetime import date
 from typing import Any
 
 import jwt
-from anthropic import RateLimitError
 from jwt import PyJWKClient
 from jwt.exceptions import PyJWKClientError
 
-from app.ai.agenda import PROMPT_VERSION, AgendaParseError, cost_usd, parse_agenda
+from app.ai.agenda import (
+    PROMPT_VERSION,
+    AgendaModelHTTPError,
+    AgendaParseError,
+    cost_usd,
+    parse_agenda,
+)
 from app.config import (
     COGNITO_CLIENT_ID,
     COGNITO_REGION,
@@ -97,7 +102,15 @@ def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
             )
         )
         return _response(422, {"error": str(error)})
-    except RateLimitError:
+    except AgendaModelHTTPError as error:
+        if error.status_code != 429:
+            logger.warning("bedrock_mantle_http_error status=%s", error.status_code)
+            return _response(
+                503,
+                {
+                    "error": "The agenda parser is busy. Please try again or enter it by hand."
+                },
+            )
         usage = {"input_tokens": 0, "output_tokens": 0}
         logger.info(
             json.dumps(

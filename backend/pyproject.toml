@@ -7,10 +7,10 @@ dependencies = [
     "sqlalchemy==2.1.1",
     "alembic==1.20.0",
     "uvicorn==0.54.0",
-    "psycopg[binary]==3.3.6","awslambdaric",
+    "psycopg[binary]==3.3.6",
+    "awslambdaric",
     "boto3",
     "botocore[crt]",
-    "anthropic[bedrock]>=1.7.0",
     "PyJWT[crypto]==2.11.0",
 ]
 

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Spry agenda parser Lambda and monthly cost budget
+Description: Spry agenda parser Lambda and Function URL
 
 Parameters:
   ProjectName:
@@ -11,10 +11,10 @@ Parameters:
     Description: Existing backend container image in the deployment region
   ParserModel:
     Type: String
-    Default: anthropic.claude-opus-5-5
+    Default: mistral.mistral-large-3-675b-instruct
   BedrockRegion:
     Type: String
-    Default: us-east-1
+    Default: us-west-2
   CognitoRegion:
     Type: String
     Default: eu-north-1
@@ -27,10 +27,6 @@ Parameters:
   AllowedOrigins:
     Type: CommaDelimitedList
     Default: https://d3b5dueyhkda58.cloudfront.net,http://localhost:5173
-  BudgetEmail:
-    Type: String
-    Description: Email address to receive the $5 monthly budget alert
-
 Resources:
   ParserRole:
     Type: AWS::IAM::Role
@@ -118,45 +114,6 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: "*"
       InvokedViaFunctionUrl: true
-
-  MonthlyAiBudget:
-    Type: AWS::Budgets::Budget
-    Properties:
-      Budget:
-        BudgetName: !Sub "${ProjectName}-monthly-ai-5-usd"
-        BudgetLimit:
-          Amount: 5
-          Unit: USD
-        TimeUnit: MONTHLY
-        BudgetType: COST
-      NotificationsWithSubscribers:
-        - Notification:
-            NotificationType: ACTUAL
-            ComparisonOperator: GREATER_THAN
-            Threshold: 80
-            ThresholdType: PERCENTAGE
-          Subscribers:
-            - SubscriptionType: EMAIL
-              Address: !Ref BudgetEmail
-        - Notification:
-            NotificationType: ACTUAL
-            ComparisonOperator: GREATER_THAN
-            Threshold: 100
-            ThresholdType: PERCENTAGE
-          Subscribers:
-            - SubscriptionType: EMAIL
-              Address: !Ref BudgetEmail
-        - Notification:
-            NotificationType: FORECASTED
-            ComparisonOperator: GREATER_THAN
-            Threshold: 100
-            ThresholdType: PERCENTAGE
-          Subscribers:
-            - SubscriptionType: EMAIL
-              Address: !Ref BudgetEmail
-      ResourceTags:
-        - Key: PROJECT_NAME
-          Value: !Ref ProjectName
 
 Outputs:
   AgendaParserUrl:
