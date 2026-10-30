@@ -69,7 +69,8 @@ resource "aws_lambda_function" "parser" {
   }
 
   tags = {
-    PROJECT_NAME = var.project_name
+    PROJECT_NAME  = var.project_name
+    LAB7_MIGRATED = "terraform"
   }
 
   depends_on = [aws_cloudwatch_log_group.parser]
