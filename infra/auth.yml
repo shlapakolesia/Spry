@@ -24,6 +24,8 @@ Parameters:
 Resources:
 
   UserPool:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Cognito::UserPool
     Properties:
       UserPoolName: !Sub "${ProjectName}-users"
@@ -52,6 +54,8 @@ Resources:
 
 
   GoogleIdentityProvider:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Cognito::UserPoolIdentityProvider
     Properties:
       UserPoolId: !Ref UserPool
@@ -70,6 +74,8 @@ Resources:
 
 
   UserPoolClient:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Cognito::UserPoolClient
     DependsOn:
       - GoogleIdentityProvider
@@ -109,6 +115,8 @@ Resources:
 
 
   UserPoolDomain:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Cognito::UserPoolDomain
     Properties:
       Domain: !Ref CognitoDomainPrefix
@@ -117,6 +125,8 @@ Resources:
 
 
   ManagedLoginBranding:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Cognito::ManagedLoginBranding
     DependsOn:
       - UserPoolDomain

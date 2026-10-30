@@ -5,7 +5,7 @@ ECR_REGISTRY ?= $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
 S3_BUCKET ?= spry-frontend-664874246122
 CLOUDFRONT_DIST_ID ?= E1XBOI4V3UL61W
 
-.PHONY: build-local up-local deploy-frontend deploy-backend report-now llm-hello parse
+.PHONY: build-local up-local deploy-frontend deploy-backend infra-plan report-now llm-hello parse
 
 # Local Development
 up-local:
@@ -24,13 +24,13 @@ deploy-backend:
 	docker push $(ECR_REGISTRY)/spry-backend:latest
 	aws ecs update-service --cluster spry-cluster --service spry-backend-service --force-new-deployment
 
+# Plans run in the HCP Terraform workspace configured for remote execution.
+infra-plan:
+	terraform -chdir=infra plan
+
 report-now:
 	@test -n "$(WEEK)" || (echo "Usage: make report-now WEEK=2026-W39" && exit 1)
-	@QUEUE_URL=$$(aws cloudformation describe-stacks \
-		--stack-name spry-reports \
-		--region eu-north-1 \
-		--query "Stacks[0].Outputs[?OutputKey=='ReportRequestsQueueUrl'].OutputValue" \
-		--output text); \
+	@QUEUE_URL=$$(terraform -chdir=infra output -raw report_requests_queue_url); \
 	aws sqs send-message \
 		--region eu-north-1 \
 		--queue-url "$$QUEUE_URL" \

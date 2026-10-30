@@ -23,6 +23,8 @@ Parameters:
 Resources:
 
   ReportsBucket:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::S3::Bucket
     DependsOn:
       - ReportMailerInvokePermission
@@ -63,6 +65,8 @@ Resources:
 
 
   S3GatewayEndpoint:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::EC2::VPCEndpoint
     Properties:
       VpcEndpointType: Gateway
@@ -78,6 +82,8 @@ Resources:
 
 
   ReportRequestsDLQ:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub "${ProjectName}-report-requests-dlq"
@@ -88,6 +94,8 @@ Resources:
 
 
   ReportRequestsQueue:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Sub "${ProjectName}-report-requests"
@@ -103,6 +111,8 @@ Resources:
           Value: !Ref ProjectName
 
   ReportBuilderRole:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${ProjectName}-report-builder-role"
@@ -137,6 +147,8 @@ Resources:
 
 
   ReportBuilderFunction:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub "${ProjectName}-report-builder"
@@ -178,6 +190,8 @@ Resources:
 
 
   ReportRequestsEventSourceMapping:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::EventSourceMapping
     Properties:
       EventSourceArn: !GetAtt ReportRequestsQueue.Arn
@@ -187,6 +201,8 @@ Resources:
 
 
   ReportSchedulerRole:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${ProjectName}-report-scheduler-role"
@@ -217,6 +233,8 @@ Resources:
 
 
   WeeklyReportSchedule:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Scheduler::Schedule
     Properties:
       Name: !Sub "${ProjectName}-weekly-report"
@@ -234,6 +252,8 @@ Resources:
         RoleArn: !GetAtt ReportSchedulerRole.Arn
         Input: '{"week":null,"source":"schedule"}'
   ReportMailerRole:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${ProjectName}-report-mailer-role"
@@ -272,6 +292,8 @@ Resources:
 
 
   ReportMailerFunction:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub "${ProjectName}-report-mailer"
@@ -303,6 +325,8 @@ Resources:
 
 
   ReportMailerInvokePermission:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref ReportMailerFunction

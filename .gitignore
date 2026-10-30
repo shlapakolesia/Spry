@@ -3,3 +3,9 @@ dist/
 __pycache__/
 .venv/
 .env
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log

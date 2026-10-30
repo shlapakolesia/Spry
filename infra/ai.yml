@@ -29,6 +29,8 @@ Parameters:
     Default: https://d3b5dueyhkda58.cloudfront.net,http://localhost:5173
 Resources:
   ParserRole:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::IAM::Role
     Properties:
       RoleName: !Sub "${ProjectName}-agenda-parser-role"
@@ -54,6 +56,8 @@ Resources:
           Value: !Ref ProjectName
 
   ParserLogGroup:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${ProjectName}-agenda-parser"
@@ -63,6 +67,8 @@ Resources:
           Value: !Ref ProjectName
 
   AgendaParserFunction:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Function
     DependsOn: ParserLogGroup
     Properties:
@@ -89,6 +95,8 @@ Resources:
           Value: !Ref ProjectName
 
   AgendaParserUrl:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Url
     Properties:
       TargetFunctionArn: !GetAtt AgendaParserFunction.Arn
@@ -100,6 +108,8 @@ Resources:
         MaxAge: 600
 
   AgendaParserUrlPermission:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref AgendaParserFunction
@@ -108,6 +118,8 @@ Resources:
       FunctionUrlAuthType: NONE
 
   AgendaParserInvokeViaUrlPermission:
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !Ref AgendaParserFunction

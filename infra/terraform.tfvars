@@ -1,0 +1,17 @@
+aws_region                = "eu-north-1"
+project_name              = "spry"
+frontend_url              = "https://d3b5dueyhkda58.cloudfront.net"
+cognito_domain_prefix     = "spry-auth-lab3-2026"
+reports_backend_image_uri = "664874246122.dkr.ecr.eu-north-1.amazonaws.com/spry-backend:latest"
+parser_backend_image_uri  = "664874246122.dkr.ecr.eu-north-1.amazonaws.com/spry-backend:agenda-mantle-20261029-v2"
+parser_model              = "mistral.mistral-large-3-675b-instruct"
+bedrock_region            = "us-west-2"
+cognito_region            = "eu-north-1"
+cognito_user_pool_id      = "eu-north-1_m4dJRmho3"
+cognito_client_id         = "1uucla7u51q5an1th1j48hjtbi"
+allowed_origins           = ["https://d3b5dueyhkda58.cloudfront.net", "http://localhost:5173"]
+vpc_id                    = "vpc-01da44e0522af7fb3"
+route_table_id            = "rtb-0daf2fcbdbee9682e"
+reports_security_group_id = "sg-024614036ebadfa3e"
+reports_subnet_ids        = ["subnet-09c54c7d8c19b8d3a", "subnet-06cb98888ce17a7c3", "subnet-043ecedf75a5dcdee"]
+reports_bucket_name       = "spry-reports-664874246122"
