@@ -37,8 +37,15 @@ resource "google_project_service" "lab" {
   for_each = toset([
     "artifactregistry.googleapis.com", "firebase.googleapis.com",
     "firebasehosting.googleapis.com", "firebaserules.googleapis.com",
-    "iam.googleapis.com", "iamcredentials.googleapis.com",
-    "run.googleapis.com", "sts.googleapis.com",
+    "run.googleapis.com",
+  ])
+  service            = each.value
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "identity" {
+  for_each = toset([
+    "iam.googleapis.com", "iamcredentials.googleapis.com", "sts.googleapis.com",
   ])
   service            = each.value
   disable_on_destroy = false
@@ -47,7 +54,7 @@ resource "google_project_service" "lab" {
 resource "google_service_account" "lab" {
   for_each   = toset(["runtime", "terraform", "publisher"])
   account_id = "spry-lab-${each.key}"
-  depends_on = [google_project_service.lab]
+  depends_on = [google_project_service.identity]
 }
 
 resource "google_project_iam_member" "role" {
@@ -123,7 +130,7 @@ resource "google_artifact_registry_repository_iam_member" "deployer" {
 resource "google_iam_workload_identity_pool" "github" {
   count                     = var.github == null ? 0 : 1
   workload_identity_pool_id = "spry-lab-github"
-  depends_on                = [google_project_service.lab]
+  depends_on                = [google_project_service.identity]
 }
 
 resource "google_iam_workload_identity_pool_provider" "github" {

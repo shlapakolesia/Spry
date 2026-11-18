@@ -4,7 +4,7 @@ Firebase Hosting serves the Spry React build and forwards `/api/**` to Cloud Run
 
 ## 1. Project, billing and credentials
 
-Use the dedicated application project `spry-ucu-lab-2026-a83f`. Its default Firestore database and one synthetic meeting already exist, and billing is disabled. The separate `spry-ucu-sandbox-2026-74cf` project is for BigQuery. Leave the existing authentication project alone. Install Terraform ≥1.10, gcloud, Docker, Python 3.13, and Node 24. Run commands from the repository root.
+Use the dedicated application project `spry-ucu-lab-2026-a83f`. Its default Firestore database, one synthetic meeting, lab service accounts and GitHub federation already exist. Billing is disabled. The separate `spry-ucu-sandbox-2026-74cf` project is for BigQuery. Leave the existing authentication project alone. Install Terraform ≥1.10, gcloud, Docker, Python 3.13, and Node 24. Run commands from the repository root.
 
 The Blaze plan is required for Hosting rewrites to Run. Usage is expected to fit free quotas. Linking billing authorizes overages. Enable billing and apply only after approving that risk. Create a budget in Cloud Console → Billing → Budgets & alerts → Create budget. Scope it to the new project, set $5 monthly, and use actual thresholds of 50%, 90% and 100%. This budget sends alerts. Review other usage on the billing account before proceeding.
 
@@ -25,12 +25,12 @@ export TF_VAR_project_id="$SPRY_GCP_PROJECT"
 
 ## 2. Separate state and bootstrap
 
-Local state defaults to `gcp/bootstrap/terraform.tfstate` and `gcp/terraform.tfstate`. Keep both private and backed up. For the assignment's HCP state, create two new CLI-driven HCP workspaces, `spry-gcp-bootstrap` and `spry-gcp-lab`, in your organization. In each workspace open Settings → General and choose **Local** execution. The CLI uses local ADC and HCP stores state and locks. The existing `spry-dev` workspace remains isolated.
+The GCP roots are connected to two private HCP Terraform workspaces in the free `spry_olesia` organization. [spry-gcp-bootstrap](https://app.terraform.io/app/spry_olesia/workspaces/spry-gcp-bootstrap) holds the application bootstrap state. [spry-gcp-lab](https://app.terraform.io/app/spry_olesia/workspaces/spry-gcp-lab) is reserved for Cloud Run. Both execute locally with ADC, while HCP stores and locks state. The separate `spry-dev` workspace remains the AWS workspace.
 
-Run `terraform login`. To configure HCP before the first init, use the following after setting the organization name. If those directories already have local state, back it up and follow HCP's state migration prompts before applying.
+This checkout already has ignored `hcp.tf` files pointing at those workspaces. In a fresh checkout, run `terraform login` and recreate them using the commands below. For an independent reproduction in another GCP project, create a separate pair of CLI-driven workspaces via Settings → General → Local execution, then set their names and organization in these files.
 
 ```bash
-export SPRY_HCP_ORG="replace-with-your-hcp-organization"
+export SPRY_HCP_ORG="spry_olesia"
 cat > gcp/hcp.tf <<HCL
 terraform {
   cloud {
@@ -40,6 +40,18 @@ terraform {
 }
 HCL
 sed 's/spry-gcp-lab/spry-gcp-bootstrap/' gcp/hcp.tf > gcp/bootstrap/hcp.tf
+```
+
+For this existing project, preserve the numeric WIF inputs when planning from a fresh checkout. The following file is ignored by Git and already present in this checkout.
+
+```bash
+cat > gcp/bootstrap/terraform.tfvars <<HCL
+project_id = "$SPRY_GCP_PROJECT"
+github = {
+  repository_id = "1408637382"
+  owner_id      = "245854637"
+}
+HCL
 ```
 
 The bootstrap operator needs project-scoped authority for API enablement, IAM policy, service accounts, Firestore database creation, Artifact Registry and optional federation. Appropriate predefined roles include Service Usage Admin, Project IAM Admin, Service Account Admin, Cloud Datastore Owner, Artifact Registry Administrator and optional Workload Identity Pool Admin. Use the project creator or a designated administrator for this phase. The Terraform deployment identity has Cloud Run Admin for the dedicated project, Artifact Registry Reader scoped to the lab repository, and act-as on the single runtime service account. The runtime only has Firestore viewer. CI, if enabled, uses a separate repository-level writer.
@@ -52,7 +64,7 @@ terraform -chdir=gcp/bootstrap plan
 terraform -chdir=gcp/bootstrap apply
 ```
 
-The current checkout's bootstrap state already tracks the Firestore API and database. Preserve that state when switching to HCP. In a fresh checkout without access to the original state, import the existing resources before the bootstrap plan or apply. Import only when neither resource is already in state.
+The existing HCP bootstrap workspace already tracks Firestore and IAM, including the federation provider. If the original state ever becomes unavailable and you deliberately create a replacement workspace for this same project, import existing resources before applying. For Firestore, the two commands are:
 
 ```bash
 terraform -chdir=gcp/bootstrap import google_project_service.firestore "$SPRY_GCP_PROJECT/firestore.googleapis.com"
@@ -61,7 +73,7 @@ terraform -chdir=gcp/bootstrap import google_firestore_database.lab "projects/$S
 
 If Terraform returns `serviceusage.services.list` denied while gcloud can see the project, renew ADC as the same project operator selected in gcloud. Terraform and gcloud use separate credentials.
 
-Optional WIF setup goes **before** running bootstrap, or re-plan afterwards. Use repository metadata from `gh api repos/shlapakolesia/Spry --jq '[.id,.owner.id]'`. Copy `gcp/bootstrap/terraform.tfvars.example` to `gcp/bootstrap/terraform.tfvars`, set the new project and both numeric IDs, and review the plan. In GitHub Settings → Environments create `gcp-lab` and restrict deployment to `lab-gcp`. Set environment variables `GCP_PROJECT_ID`, `GCP_WIF_PROVIDER` and `GCP_PUBLISHER_SA` using the bootstrap outputs `github_provider` and `publisher_service_account`. Only when ready to publish, set repository variable `GCP_ENABLE_IMAGE_PUBLISH=true`. The next push to `lab-gcp` can publish and print the digest. Disable the variable after use to avoid unneeded images. Cloud Run deployment stays under Terraform. The WIF provider checks numeric repository and owner IDs and the branch. No key is issued.
+The lab's WIF is active and scoped to the numeric repository and owner IDs and the `lab-gcp` branch. For a different repository, verify its IDs with `gh api repos/OWNER/REPO --jq '[.id,.owner.id]'` before applying a separate lab. In GitHub Settings → Environments create `gcp-lab` and restrict deployment to `lab-gcp`. Set environment variables `GCP_PROJECT_ID`, `GCP_WIF_PROVIDER` and `GCP_PUBLISHER_SA` using the bootstrap outputs `github_provider` and `publisher_service_account`. Only when ready to publish to the approved registry, set repository variable `GCP_ENABLE_IMAGE_PUBLISH=true`. The next push to `lab-gcp` can publish and print the digest. Disable the variable after use to avoid retaining unneeded images. Cloud Run deployment stays under Terraform.
 
 ## 3. Image, seed and API
 
@@ -133,6 +145,6 @@ For a real local Firestore integration test, install gcloud components `beta` an
 Keep the live URL until evidence is saved and the grader no longer needs access. Leaving it reachable can accrue traffic and logs. No Cloud SQL is used, so there is no SQL instance to stop. If you separately used regular Cloud SQL, stop it in Cloud SQL → instance → Stop to stop CPU charges, or delete it when storage is no longer needed.
 
 1. In GitHub remove or disable `GCP_ENABLE_IMAGE_PUBLISH`. Disable Firebase Hosting with `(cd gcp && npx --yes firebase-tools@15 hosting:disable --project "$SPRY_GCP_PROJECT")`.
-2. Restore the exact project identifier and image digest from the deployment shell. Inspect `terraform -chdir=gcp state list` and `terraform -chdir=gcp/bootstrap state list`. Then run `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="$SPRY_TF_SA" terraform -chdir=gcp destroy` before `terraform -chdir=gcp/bootstrap destroy`. Review each destroy plan. These commands remove the API, registry, Firestore and lab IAM identities. The Firebase project registration and manually enabled demo APIs are outside Terraform.
+2. Restore the exact project identifier and image digest from the deployment shell. Inspect `terraform -chdir=gcp state list` and `terraform -chdir=gcp/bootstrap state list`. Then run `GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="$SPRY_TF_SA" terraform -chdir=gcp destroy` before `terraform -chdir=gcp/bootstrap destroy`. Review each destroy plan. If the service workspace is empty, skip its destroy command. The commands remove the lab API, registry, Firestore and IAM identities as applicable. The Firebase project registration and manually enabled demo APIs are outside Terraform.
 3. If Dataflow was opted into, inspect completed or active jobs, delete only lab staging/input/output buckets and BigQuery demo tables, and remove any demo service account. For the separate BigQuery sandbox, export evidence, then delete the sandbox project or keep it unbilled for grading.
 4. Confirm `gcloud run services list --project="$SPRY_GCP_PROJECT" --region=us-central1`, `gcloud artifacts repositories list --project="$SPRY_GCP_PROJECT" --location=us-central1`, and `gcloud firestore databases list --project="$SPRY_GCP_PROJECT"` are empty. Check Cloud Console → Billing → Reports with the project filter the next day. Delete the dedicated application project via IAM & Admin → Settings → Shut down if it is no longer needed. Never run these cleanup steps against the AWS configuration or a shared project.

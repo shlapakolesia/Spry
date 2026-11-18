@@ -47,7 +47,7 @@ AWS includes 1M Lambda requests and 400,000 GiB-s plus 5 GB of CloudWatch log al
 - **AWS PostgreSQL shared across clouds** retains the AWS database bill and can add private connectivity, gateway and transfer costs. The extra hop increases latency and a remote connection pool can keep Aurora awake. No public database access is required for this lab.
 - **Cloud SQL product trial** is a distinct 30-day instance offer with billable exceptions. **Signup credits** are temporary and distinct from recurring quotas. Neither was used.
 
-No billing-linked stack was deployed. Two dedicated unbilled projects exist. The application project contains the default Firestore database and one seed record. The other project ran the BigQuery sandbox query. Expected cash for the proposed student stack is $0 under the class assumptions and available allowances. Forecast and actual spend must be checked in Billing → Reports after any approved deployment.
+No billing-linked stack was deployed. Two dedicated unbilled projects exist. The application project contains the default Firestore database and one seed record, plus no-charge IAM identities and federation. The two HCP Terraform state workspaces use the existing free organization plan. The other project ran the BigQuery sandbox query. Expected cash for the proposed student stack is $0 under the class assumptions and available allowances. Forecast and actual spend must be checked in Billing → Reports after any approved deployment.
 
 ## Pricing references
 
