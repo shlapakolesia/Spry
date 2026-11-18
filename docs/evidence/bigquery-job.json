@@ -1,0 +1,17 @@
+{
+  "jobReference": {
+    "jobId": "spry_lab_usa_names_bounded_20261118",
+    "location": "US",
+    "projectId": "spry-ucu-sandbox-2026-74cf"
+  },
+  "result": {
+    "state": "DONE"
+  },
+  "statistics": {
+    "totalBytesProcessed": "169627794",
+    "totalBytesBilled": "169869312",
+    "cacheHit": false,
+    "statementType": "SELECT"
+  },
+  "rowsInExport": 63
+}

@@ -1,4 +1,4 @@
-import type { AiSuggestion, Meeting, MeetingCreate, ParsedAgenda } from "@/types/meeting";
+import type { AiSuggestion, Meeting, MeetingCreate, MeetingSummary, ParsedAgenda } from "@/types/meeting";
 
 interface ValidationError {
   msg: string;
@@ -21,10 +21,20 @@ async function errorMessage(response: Response): Promise<string> {
   return `Request failed (${response.status})`;
 }
 
-export async function listMeetings(token?: string): Promise<Meeting[]> {
+async function fetchMeetingList(token?: string): Promise<Response> {
   const response = await fetch("/api/meetings", { headers: token ? { Authorization: `Bearer ${token}` } : {} });
   if (!response.ok) throw new Error(await errorMessage(response));
+  return response;
+}
+
+export async function listMeetings(token?: string): Promise<Meeting[]> {
+  const response = await fetchMeetingList(token);
   return (await response.json()) as Meeting[];
+}
+
+export async function listPublicMeetings(): Promise<MeetingSummary[]> {
+  const response = await fetchMeetingList();
+  return (await response.json()) as MeetingSummary[];
 }
 
 export async function createMeeting(input: MeetingCreate, token?: string): Promise<Meeting> {

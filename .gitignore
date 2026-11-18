@@ -9,3 +9,11 @@ __pycache__/
 *.tfplan
 crash.log
 crash.*.log
+
+/gcp/**/terraform.tfvars
+/gcp/**/*.auto.tfvars
+/gcp/**/hcp.tf
+/gcp/hosting-dist/
+/gcp/firebase-debug.log
+/gcp/.firebase/
+gha-creds-*.json

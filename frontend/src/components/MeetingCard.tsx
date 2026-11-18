@@ -1,7 +1,7 @@
 import { Clock, Users } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { Meeting } from "@/types/meeting";
+import type { Meeting, MeetingSummary } from "@/types/meeting";
 import { AgendaEditor } from "@/components/AgendaEditor";
 
 const dateFormat = new Intl.DateTimeFormat(undefined, {
@@ -21,7 +21,11 @@ function formatRange(start: Date, end: Date): string {
   return `${dateFormat.format(start)}, ${timeFormat.format(start)} – ${dateFormat.format(end)}, ${timeFormat.format(end)}`;
 }
 
-export function MeetingCard({ meeting, token }: { meeting: Meeting; token?: string }) {
+type MeetingCardProps =
+  { meeting: Meeting; token?: string; readOnly?: false } | { meeting: MeetingSummary; readOnly: true };
+
+export function MeetingCard(props: MeetingCardProps) {
+  const { meeting } = props;
   const start = new Date(meeting.starts_at);
   const end = new Date(meeting.ends_at);
   const attendees = meeting.attendee_count === 1 ? "1 attendee" : `${meeting.attendee_count} attendees`;
@@ -41,9 +45,11 @@ export function MeetingCard({ meeting, token }: { meeting: Meeting; token?: stri
           {attendees}
         </span>
       </CardContent>
-      <CardContent className="border-t pt-4">
-        <AgendaEditor meeting={meeting} token={token} />
-      </CardContent>
+      {!props.readOnly && (
+        <CardContent className="border-t pt-4">
+          <AgendaEditor meeting={props.meeting} token={props.token} />
+        </CardContent>
+      )}
     </Card>
   );
 }

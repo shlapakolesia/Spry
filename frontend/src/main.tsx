@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { AuthProvider } from "react-oidc-context";
 import App from "@/App";
+import { PublicMeetings } from "@/components/PublicMeetings";
 import "@/index.css";
 
 const cognitoAuthConfig = {
@@ -22,8 +23,12 @@ const cognitoAuthConfig = {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider {...cognitoAuthConfig}>
-      <App />
-    </AuthProvider>
+    {import.meta.env.VITE_SPRY_GCP_DEMO === "true" ? (
+      <PublicMeetings />
+    ) : (
+      <AuthProvider {...cognitoAuthConfig}>
+        <App />
+      </AuthProvider>
+    )}
   </StrictMode>,
 );

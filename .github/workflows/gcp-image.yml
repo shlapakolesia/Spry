@@ -1,0 +1,29 @@
+name: Publish Spry GCP lab image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [lab-gcp]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/lab-gcp' && vars.GCP_ENABLE_IMAGE_PUBLISH == 'true'
+    environment: gcp-lab
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/spry-lab/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_PUBLISHER_SA }}
+      - uses: google-github-actions/setup-gcloud@v3
+      - run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+      - run: docker build --platform linux/amd64 --provenance=false -f backend/Dockerfile.gcp -t "$IMAGE:$GITHUB_SHA" backend
+      - run: docker push "$IMAGE:$GITHUB_SHA"
+      - run: gcloud artifacts docker images describe "$IMAGE:$GITHUB_SHA" --format='value(image_summary.digest)'

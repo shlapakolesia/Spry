@@ -1,0 +1,16 @@
+{
+  "project": "spry-ucu-lab-2026-a83f",
+  "database": "(default)",
+  "environment": "local FastAPI test client connected to live GCP Firestore",
+  "path": "/api/meetings",
+  "status": 200,
+  "response": [
+    {
+      "id": 1,
+      "title": "Spry cloud architecture walkthrough",
+      "starts_at": "2026-11-23T14:00:00Z",
+      "ends_at": "2026-11-23T15:00:00Z",
+      "attendee_count": 6
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "BigQuery Schema": [
+    {"name": "id", "type": "INTEGER"},
+    {"name": "title", "type": "STRING"},
+    {"name": "attendee_count", "type": "INTEGER"}
+  ]
+}

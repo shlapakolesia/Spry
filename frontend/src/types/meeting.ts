@@ -1,9 +1,12 @@
-export interface Meeting {
+export interface MeetingSummary {
   id: number;
   title: string;
   starts_at: string;
   ends_at: string;
   attendee_count: number;
+}
+
+export interface Meeting extends MeetingSummary {
   agenda: ParsedAgenda | null;
   ai_suggestion: AiSuggestion | null;
 }

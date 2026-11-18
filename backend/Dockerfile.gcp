@@ -1,0 +1,8 @@
+FROM python:3.13-slim
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+COPY requirements-gcp.txt ./
+RUN pip install --no-cache-dir -r requirements-gcp.txt
+COPY app/__init__.py app/firestore_meetings.py app/gcp_main.py ./app/
+USER 65532:65532
+CMD ["sh", "-c", "exec uvicorn app.gcp_main:app --host 0.0.0.0 --port \"${PORT:-8080}\""]
