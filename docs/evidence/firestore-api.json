@@ -1,8 +1,8 @@
 {
   "project": "spry-ucu-lab-2026-a83f",
   "database": "(default)",
-  "environment": "local FastAPI test client connected to live GCP Firestore",
-  "path": "/api/meetings",
+  "environment": "Cloud Run revision spry-lab-api-00001-s52 connected to live Firestore",
+  "url": "https://spry-lab-api-4zmigy2dba-uc.a.run.app/api/meetings",
   "status": 200,
   "response": [
     {

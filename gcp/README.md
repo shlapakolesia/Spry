@@ -4,9 +4,9 @@ Firebase Hosting serves the Spry React build and forwards `/api/**` to Cloud Run
 
 ## 1. Project, billing and credentials
 
-Use the dedicated application project `spry-ucu-lab-2026-a83f`. Its default Firestore database, one synthetic meeting, lab service accounts and GitHub federation already exist. Billing is disabled. The separate `spry-ucu-sandbox-2026-74cf` project is for BigQuery. Leave the existing authentication project alone. Install Terraform ≥1.10, gcloud, Docker, Python 3.13, and Node 24. Run commands from the repository root.
+Use the dedicated application project `spry-ucu-lab-2026-a83f`. Its default Firestore database, one synthetic meeting, lab service accounts and GitHub federation already exist. Billing is linked to the verified, unupgraded Free Trial for this project. The separate `spry-ucu-sandbox-2026-74cf` project is for BigQuery. Leave the existing authentication project alone. Install Terraform ≥1.10, gcloud, Docker, Python 3.13, and Node 24. Run commands from the repository root.
 
-The Blaze plan is required for Hosting rewrites to Run. Usage is expected to fit free quotas. Linking billing authorizes overages. Enable billing and apply only after approving that risk. Create a budget in Cloud Console → Billing → Budgets & alerts → Create budget. Scope it to the new project, set $5 monthly, and use actual thresholds of 50%, 90% and 100%. This budget sends alerts. Review other usage on the billing account before proceeding.
+The Blaze plan is required for Hosting rewrites to Run. Usage is expected to fit free quotas. Linking billing authorizes overages. For this lab, use a verified, unupgraded Free Trial and keep it on that account type. Create a budget in Cloud Console → Billing → Budgets & alerts → Create budget. Scope it to the new project, set $5 monthly, and use actual thresholds of 50%, 90% and 100%. This budget sends alerts. Review other usage on the billing account before proceeding.
 
 ```bash
 export SPRY_GCP_PROJECT="spry-ucu-lab-2026-a83f"
@@ -16,7 +16,7 @@ gcloud auth application-default login
 
 For a separate reproduction, generate a unique ID with `export SPRY_GCP_PROJECT="spry-ucu-lab-$(openssl rand -hex 4)"` and run `gcloud projects create "$SPRY_GCP_PROJECT" --name="Spry UCU Cloud Lab"`. IDs are permanent and globally unique.
 
-In Billing → My projects, link the dedicated project to the approved account and create the budget before provisioning services. In Firebase Console → Add project → select the existing GCP project → turn off Google Analytics unless needed. CLI alternative after setting up billing is `npx --yes firebase-tools@15 login` followed by `npx --yes firebase-tools@15 projects:addfirebase "$SPRY_GCP_PROJECT"`. If Firebase terms are presented, accept them in your own session. The Firebase plan shows Blaze when the billing account is linked. Confirm `gcloud billing projects describe "$SPRY_GCP_PROJECT"` and set the ADC quota project. If Service Usage is disabled, enable it in APIs & Services first.
+For a new deployment, in Billing → My projects, link the dedicated project to the approved Free Trial account and create the budget before provisioning services. The existing lab project already has the approved link and budget. In Firebase Console → Add project → select the existing GCP project → turn off Google Analytics unless needed. CLI alternative after setting up billing is `npx --yes firebase-tools@15 login` followed by `npx --yes firebase-tools@15 projects:addfirebase "$SPRY_GCP_PROJECT"`. If Firebase terms are presented, accept them in your own session. The Firebase plan shows Blaze when the billing account is linked. Confirm `gcloud billing projects describe "$SPRY_GCP_PROJECT"` and set the ADC quota project. If Service Usage is disabled, enable it in APIs & Services first.
 
 ```bash
 gcloud auth application-default set-quota-project "$SPRY_GCP_PROJECT"
@@ -108,7 +108,6 @@ terraform -chdir=gcp init
 GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="$SPRY_TF_SA" terraform -chdir=gcp plan
 GOOGLE_IMPERSONATE_SERVICE_ACCOUNT="$SPRY_TF_SA" terraform -chdir=gcp apply
 SPRY_API="$(terraform -chdir=gcp output -raw api_url)"
-curl -fsS "$SPRY_API/healthz"
 curl -fsS "$SPRY_API/api/meetings"
 ```
 

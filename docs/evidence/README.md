@@ -1,9 +1,8 @@
 # Lab evidence
 
-Keep the three real screenshots here as `bigquery.png`, `looker-studio.png`, and `vision-ocr.png`. The [demo guide](../../gcp/demos/README.md) maps each screenshot to the steps and the expected content.
+- The [BigQuery job](bigquery-job.json) completed in the unbilled sandbox. It returned [63 rows](bigquery-results.csv) and processed 169,627,794 bytes. The console screenshot showing the SQL and results is saved as `BigQuery.png` in the Desktop submission folder.
+- Cloud Vision recognized the synthetic receipt, including its USD 9.00 total. A genuine screenshot of the returned text is saved as `OCR.png` in the Desktop submission folder.
+- Data Studio requires first-time terms acceptance before creating the chart from the exported CSV.
+- [Firestore API response](firestore-api.json) records HTTP 200 from the deployed Cloud Run API reading the live default Firestore database.
 
-- The [BigQuery job](bigquery-job.json) completed in the unbilled sandbox. It returned [63 rows](bigquery-results.csv) and processed 169,627,794 bytes. A console screenshot is pending.
-- Looker Studio needs a browser session and the BigQuery output.
-- Vision OCR needs a billing-enabled approved project and one small, non-sensitive image.
-
-[Firestore API response](firestore-api.json) records a local FastAPI test client reading the live, unbilled Google Cloud Firestore database. Cloud Run and Firebase Hosting remain pending.
+The [demo guide](../../gcp/demos/README.md) describes how to reproduce the evidence.

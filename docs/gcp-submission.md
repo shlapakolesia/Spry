@@ -20,14 +20,16 @@ A certification tests breadth, vocabulary and judgment against a provider's exam
 
 ## Submission checklist
 
-- [ ] Paste the GitHub commit URL after pushing `lab-gcp`.
-- [ ] Paste the real Firebase HTTPS URL and Cloud Run `/api/meetings` URL after approval, deployment and end-to-end verification.
+- [x] Terraform and ADR are pushed to [GitHub branch lab-gcp](https://github.com/shlapakolesia/Spry/tree/lab-gcp).
+- [x] Verify the [Cloud Run meetings endpoint](https://spry-lab-api-4zmigy2dba-uc.a.run.app/api/meetings) against live Firestore.
+- [ ] Add the Firebase HTTPS URL after project registration and rewrite verification.
 - [x] Include the [architecture decision](adr/aws-to-gcp-migration.md) and [four-profile costs](gcp-cost-comparison.md).
-- [ ] Attach BigQuery, Looker Studio and OCR screenshots after following the [demo instructions](../gcp/demos/README.md).
+- [x] BigQuery and Vision OCR screenshots are saved in the Desktop submission folder.
+- [ ] Attach the Looker Studio screenshot after completing [Data Studio setup](../gcp/demos/README.md#b-looker-studio-now-data-studio).
 - [ ] Keep the environment for grading as needed. Then follow the [cleanup guide](../gcp/README.md#6-cleanup-after-grading).
 
 ## Ready-to-paste summary
 
-> I implemented a separate Google Cloud configuration for Spry's public meeting list. Firebase Hosting serves the React frontend, Cloud Run serves the read-only FastAPI endpoint, and Firestore Native stores seeded sample meetings. The AWS PostgreSQL app, Cognito sign-in, weekly reports and agenda parser remain on AWS. GCP Terraform state is separate. The ADR maps the services and documents the data model change. The cost analysis projects $0 billed for class traffic if the available ongoing free quotas cover usage.
+> I implemented a separate Google Cloud configuration for Spry's public meeting list. Cloud Run serves the read-only FastAPI endpoint, and Firestore Native stores seeded sample meetings. The React frontend is built for Firebase Hosting. The AWS PostgreSQL app, Cognito sign-in, weekly reports and agenda parser remain on AWS. GCP Terraform state is separate. The ADR maps the services and documents the data model change. The cost analysis projects $0 billed for class traffic if the available ongoing free quotas cover usage.
 >
-> Commit: [insert pushed commit URL]. Frontend: [insert verified Firebase URL]. API: [insert verified Cloud Run URL]/api/meetings. Attach the real BigQuery results screenshot, Looker Studio chart and Vision OCR screenshot after capturing them. Use the status in the [verification record](gcp-verification.md) to distinguish local checks from live results.
+> Commit: [insert pushed commit URL]. Frontend: [insert verified Firebase URL]. API: https://spry-lab-api-4zmigy2dba-uc.a.run.app/api/meetings. Attach the real BigQuery results screenshot, Looker Studio chart and Vision OCR screenshot after capturing them. Use the status in the [verification record](gcp-verification.md) to distinguish local checks from live results.
