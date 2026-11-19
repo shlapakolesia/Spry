@@ -1,6 +1,6 @@
 # ADR 0008 · Move Spry's public meeting list to Google Cloud
 
-**Status:** Selected and deployed for the lab. Cloud Run and Firestore are live on the verified Free Trial. Firebase Hosting awaits project registration.
+**Status:** Selected and deployed for the lab. Firebase Hosting, Cloud Run, and Firestore are live on the verified Free Trial. The public Hosting rewrite returns the seeded Firestore record.
 
 The AWS checkout uses Python/FastAPI, SQLAlchemy and PostgreSQL. Alembic 0001 creates meetings and 0002 adds agenda and AI suggestion JSON. Compose migrates with `alembic upgrade head`. `GET /api/meetings` orders by start time and ID, `POST` creates a meeting, and `PUT /api/meetings/{id}/agenda` persists the agenda. The React/Vite frontend uses relative URLs and Cognito through OIDC. `infra/` manages the imported authentication, report and parser resources in HCP workspace `spry-dev`. The API, database, frontend edge and registry are outside that state. CI publishes ECR images and S3 assets. The Makefile's API rollout targets ECS, while the assignment models an alternate Lambda-based stage. The actual database instance settings and edge pricing plan require an AWS inventory or billing export to confirm.
 

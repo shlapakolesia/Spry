@@ -22,9 +22,9 @@ bq --project_id="$SPRY_BQ_PROJECT" --location=US --format=csv query \
 Use the [actual BigQuery CSV](../../docs/evidence/bigquery-results.csv) as a snapshot. The direct BigQuery connector requires a billing account, so use the free [file upload connector](https://docs.cloud.google.com/data-studio/upload-csv-files) or import the CSV into a private Google Sheet and select the Google Sheets connector. This avoids a billing dependency for a 63-row chart.
 
 1. Open [Data Studio](https://datastudio.google.com/) → Create → Report. Choose File Upload, upload the CSV and add it to the report. Complete first-use account prompts if shown.
-2. In the data source schema set `year` to a non-aggregated number, `name` to text, and `recorded_count` to a number with SUM aggregation.
-3. Add a line chart. Set dimension to `year`, breakdown dimension to `name`, metric to SUM of `recorded_count`, sort to `year` ascending, and name it **US births recorded for Emma, Olivia and Sophia, 2000–2020**. Use a visible legend and a y-axis labeled “Recorded count.”
-4. Click View, check all three series, and capture the full chart. Save `docs/evidence/looker-studio.png`. Keep the source and report private unless the course requests sharing.
+2. In the data source schema set `name` to text and `recorded_count` to a number with SUM aggregation.
+3. Add a column chart with `name` as the category and SUM of `recorded_count` as the metric. Use the title **Total US records by name, 2000–2020**. The CSV totals are 391,825 Emma records, 358,026 Olivia records, and 313,215 Sophia records.
+4. Open View to verify the chart. The genuine screenshot is saved as `Looker_Studio.png` in the Desktop submission folder. The source and report are private.
 
 ## C. Cloud Vision OCR
 
